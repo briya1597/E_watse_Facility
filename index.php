@@ -121,12 +121,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["pincode"])) {
     <!-- Navigation -->
     <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="Home.php" class="flex items-center gap-2">
+            <a href="index.php" class="flex items-center gap-2">
                 <i class="fas fa-recycle text-emerald-600 text-2xl"></i>
                 <span class="text-xl font-bold text-emerald-600">EcoRecycle</span>
             </a>
             <div class="hidden md:flex gap-8">
-                <a href="Home.php" class="text-emerald-600 font-medium">Home</a>
+                <a href="index.php" class="text-emerald-600 font-medium">Home</a>
                 <a href="Facility.php" class="text-gray-600 hover:text-emerald-600">Facilities</a>
                 <a href="Resources.html" class="text-gray-600 hover:text-emerald-600">Resources</a>
                 <a href="contact.php" class="text-gray-600 hover:text-emerald-600">Contact</a>
@@ -137,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["pincode"])) {
         </div>
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="hidden md:hidden bg-white py-4 px-4 border-t">
-            <a href="Home.php" class="block py-2 text-emerald-600">Home</a>
+            <a href="index.php" class="block py-2 text-emerald-600">Home</a>
             <a href="Facility.php" class="block py-2 text-gray-600">Facilities</a>
             <a href="Resources.html" class="block py-2 text-gray-600">Resources</a>
             <a href="contact.php" class="block py-2 text-gray-600">Contact</a>

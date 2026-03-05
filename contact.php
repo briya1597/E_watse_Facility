@@ -78,7 +78,7 @@ $conn->close();
                 <span class="text-xl font-bold text-emerald-600">EcoRecycle</span>
             </a>
             <div class="hidden md:flex gap-8">
-                <a href="Home.php" class="text-gray-600 hover:text-emerald-600">Home</a>
+                <a href="index.php" class="text-gray-600 hover:text-emerald-600">Home</a>
                 <a href="Facility.php" class="text-gray-600 hover:text-emerald-600">Facilities</a>
                 <a href="Resources.html" class="text-gray-600 hover:text-emerald-600">Resources</a>
                 <a href="contact.php" class="text-emerald-600 font-medium">Contact</a>
