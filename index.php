@@ -1,23 +1,31 @@
 <?php
-// Load facilities from JSON
-$json_data = file_get_contents('facilities.json');
-$ewaste_facilities = json_decode($json_data, true);
-
-// Process search if form submitted
+// Initialize variables to avoid undefined warnings
+$ewaste_facilities = [];
 $search_results = [];
 $search_pincode = "";
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["pincode"])) {
-    $search_pincode = trim($_POST["pincode"]);
-    $search_results = array_filter($ewaste_facilities, fn($f) => $f["pincode"] == $search_pincode);
+
+// Load facilities from JSON
+$json_path = __DIR__ . '/data/facilities.json';
+if (file_exists($json_path)) {
+    $json_data = file_get_contents($json_path);
+    $ewaste_facilities = json_decode($json_data, true) ?: [];
 }
 
-include 'header.php';
+// Process search if form submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["pincode"])) {
+    $search_pincode = trim($_POST["pincode"]);
+    if (!empty($ewaste_facilities)) {
+        $search_results = array_filter($ewaste_facilities, fn($f) => $f["pincode"] == $search_pincode);
+    }
+}
+
+include __DIR__ . '/includes/header.php';
 ?>
 
 <!-- Hero Section -->
 <section class="relative h-[600px] flex items-center overflow-hidden">
     <div class="absolute inset-0 z-0">
-        <img src="BG-HOME.jpg" alt="Hero Background" class="w-full h-full object-cover scale-110 animate-slow-zoom">
+        <img src="assets/img/BG-HOME.jpg" alt="Hero Background" class="w-full h-full object-cover scale-110 animate-slow-zoom">
         <div class="absolute inset-0 bg-gradient-to-r from-slate-900/90 to-slate-900/40"></div>
     </div>
 
@@ -95,20 +103,20 @@ include 'header.php';
                             <?php if (isset($facility['rating'])): ?>
                                 <div class="flex items-center gap-1 text-amber-500 bg-amber-50 px-2 py-1 rounded-lg text-sm font-bold">
                                     <i class="fas fa-star"></i>
-                                    <span><?= $facility['rating'] ?></span>
+                                    <span><?= htmlspecialchars($facility['rating']) ?></span>
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-3"><?= $facility["name"] ?></h3>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3"><?= htmlspecialchars($facility["name"]) ?></h3>
                         <p class="text-slate-600 mb-4 flex items-start gap-3">
                             <i class="fas fa-map-marker-alt text-emerald-500 mt-1"></i>
-                            <span><?= $facility["address"] ?></span>
+                            <span><?= htmlspecialchars($facility["address"]) ?></span>
                         </p>
                         <p class="text-slate-600 mb-6 flex items-center gap-3">
                             <i class="fas fa-phone text-emerald-500"></i>
-                            <span><?= $facility["contact"] ?></span>
+                            <span><?= htmlspecialchars($facility["contact"]) ?></span>
                         </p>
-                        <a href="Facility.php?pincode=<?= $facility['pincode'] ?>" class="w-full inline-block text-center py-3 rounded-xl border-2 border-emerald-600 text-emerald-600 font-bold hover:bg-emerald-600 hover:text-white transition-all">
+                        <a href="Facility.php?pincode=<?= htmlspecialchars($facility['pincode']) ?>" class="w-full inline-block text-center py-3 rounded-xl border-2 border-emerald-600 text-emerald-600 font-bold hover:bg-emerald-600 hover:text-white transition-all">
                             View Details
                         </a>
                     </div>
@@ -275,23 +283,28 @@ include 'header.php';
 
 <script>
     // Lottie Animations
-    const animations = [
-        { id: 'waste-Ani', path: 'Waste_Ani.json' },
-        { id: 'guide-Ani', path: 'Guide.json' },
-        { id: 'video-Ani', path: 'Video.json' },
-        { id: 'article-Ani', path: 'Article.json' },
-        { id: 'tools-Ani', path: 'Tools.json' }
-    ];
+    function loadAnimations() {
+        const animations = [
+            { id: 'waste-Ani', path: 'assets/animations/Waste_Ani.json' },
+            { id: 'guide-Ani', path: 'assets/animations/Guide.json' },
+            { id: 'video-Ani', path: 'assets/animations/Video.json' },
+            { id: 'article-Ani', path: 'assets/animations/Article.json' },
+            { id: 'tools-Ani', path: 'assets/animations/Tools.json' }
+        ];
 
-    animations.forEach(ani => {
-        lottie.loadAnimation({
-            container: document.getElementById(ani.id),
-            renderer: 'svg',
-            loop: true,
-            autoplay: true,
-            path: ani.path
+        animations.forEach(ani => {
+            const container = document.getElementById(ani.id);
+            if (container && typeof lottie !== 'undefined') {
+                lottie.loadAnimation({
+                    container: container,
+                    renderer: 'svg',
+                    loop: true,
+                    autoplay: true,
+                    path: ani.path
+                });
+            }
         });
-    });
+    }
 
     // Counters
     function animateCounter(elementId, target, duration = 2000) {
@@ -309,18 +322,23 @@ include 'header.php';
         window.requestAnimationFrame(step);
     }
 
-    const counterObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                animateCounter('ewasteCounter', 12500);
-                animateCounter('facilityCounter', 850);
-                counterObserver.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.5 });
-
-    const counterSection = document.getElementById('ewasteCounter');
-    if (counterSection) counterObserver.observe(counterSection.parentElement.parentElement);
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAnimations();
+        
+        const counterSection = document.getElementById('ewasteCounter');
+        if (counterSection) {
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter('ewasteCounter', 12500);
+                        animateCounter('facilityCounter', 850);
+                        counterObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            counterObserver.observe(counterSection.parentElement.parentElement);
+        }
+    });
 </script>
 
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

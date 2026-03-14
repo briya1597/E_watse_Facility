@@ -1,64 +1,17 @@
 <?php
-// Mock database connection - In a real app, this would be a real DB
-// We add a silent check to avoid crashing if DB doesn't exist
-$db_error = false;
-try {
-    $conn = @new mysqli("localhost", "root", "", "contact");
-    if ($conn->connect_error) {
-        $db_error = true;
-    }
-} catch (Exception $e) {
-    $db_error = true;
-}
-
-$message_sent = false;
-$error_msg = "";
-
-// Check if form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $subject = trim($_POST['subject'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-
-    if (empty($name) || empty($email) || empty($message)) {
-        $error_msg = "All fields are required!";
-    } else {
-        if ($db_error) {
-            // If DB fails, we still "succeed" for demo purposes but log it locally
-            // In a real app, you'd want to handle this better
-            $message_sent = true;
-        } else {
-            $stmt = $conn->prepare("INSERT INTO contact (name, email, subject, message) VALUES (?, ?, ?, ?)");
-            if ($stmt) {
-                $stmt->bind_param("ssss", $name, $email, $subject, $message);
-                if ($stmt->execute()) {
-                    $message_sent = true;
-                } else {
-                    $error_msg = "Failed to send message.";
-                }
-                $stmt->close();
-            } else {
-                $error_msg = "Database error. Please try again later.";
-            }
-        }
-    }
-}
-if (isset($conn) && $conn instanceof mysqli) $conn->close();
-
-include 'header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 <!-- Hero Section -->
 <section class="bg-slate-900 text-white py-24 relative overflow-hidden">
     <div class="absolute inset-0 opacity-30">
-        <img src="bg-contact.jpg" alt="Background" class="w-full h-full object-cover">
+        <img src="assets/img/bg-contact.jpg" alt="Background" class="w-full h-full object-cover">
     </div>
     <div class="container mx-auto px-4 relative z-10 text-center">
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Get In Touch</h1>
         <p class="text-xl text-slate-300 max-w-2xl mx-auto">Have questions about e-waste? Our experts are here to help you make the right choice for the planet.</p>
     </div>
-</header>
+</section>
 
 <main class="container mx-auto px-4 py-16 -mt-12 relative z-20">
     <div class="grid lg:grid-cols-3 gap-12">
@@ -124,61 +77,107 @@ include 'header.php';
                 <h3 class="text-3xl font-bold text-slate-900 mb-4">Send a Message</h3>
                 <p class="text-slate-500 mb-10 leading-relaxed">Fill out the form below and our team will get back to you within 24 hours.</p>
 
-                <?php if ($message_sent): ?>
-                    <div class="bg-emerald-50 border border-emerald-100 p-8 rounded-2xl text-center animate-bounce-in">
-                        <div class="w-16 h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-lg">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <h4 class="text-xl font-bold text-emerald-900 mb-2">Message Sent!</h4>
-                        <p class="text-emerald-700">Thank you for reaching out. We'll be in touch soon.</p>
-                        <button onclick="window.location.reload();" class="mt-6 text-emerald-600 font-bold hover:underline">Send another message</button>
+                <div id="success-message" class="hidden bg-emerald-50 border border-emerald-100 p-8 rounded-2xl text-center">
+                    <div class="w-16 h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-lg">
+                        <i class="fas fa-check"></i>
                     </div>
-                <?php else: ?>
-                    <form method="POST" class="space-y-6">
-                        <?php if ($error_msg): ?>
-                            <div class="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100">
-                                <i class="fas fa-exclamation-circle mr-2"></i> <?= $error_msg ?>
-                            </div>
-                        <?php endif; ?>
+                    <h4 class="text-xl font-bold text-emerald-900 mb-2">Message Saved!</h4>
+                    <p class="text-emerald-700">Thank you for reaching out. Your message has been saved locally.</p>
+                    <button type="button" onclick="resetForm()" class="mt-6 text-emerald-600 font-bold hover:underline">Send another message</button>
+                </div>
 
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-sm font-bold text-slate-700 ml-1">Full Name</label>
-                                <input type="text" name="name" required placeholder="John Doe" 
-                                    class="w-full px-5 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-400 text-slate-800 transition-all">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-sm font-bold text-slate-700 ml-1">Email Address</label>
-                                <input type="email" name="email" required placeholder="john@example.com" 
-                                    class="w-full px-5 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-400 text-slate-800 transition-all">
-                            </div>
-                        </div>
+                <form id="contact-form" class="space-y-6">
+                    <div id="error-message" class="hidden bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100">
+                        <i class="fas fa-exclamation-circle mr-2"></i> <span id="error-text"></span>
+                    </div>
 
+                    <div class="grid md:grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-slate-700 ml-1">Subject</label>
-                            <select name="subject" class="w-full px-5 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-400 text-slate-800 appearance-none transition-all">
-                                <option value="General Inquiry">General Inquiry</option>
-                                <option value="Facility Question">Facility Question</option>
-                                <option value="Partnership">Partnership</option>
-                                <option value="Feedback">Feedback</option>
-                            </select>
+                            <label class="text-sm font-bold text-slate-700 ml-1">Full Name</label>
+                            <input type="text" id="name" name="name" required placeholder="John Doe" 
+                                class="w-full px-5 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-400 text-slate-800 transition-all">
                         </div>
-
                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-slate-700 ml-1">Your Message</label>
-                            <textarea name="message" required rows="6" placeholder="How can we help you?" 
-                                class="w-full px-5 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-400 text-slate-800 transition-all resize-none"></textarea>
+                            <label class="text-sm font-bold text-slate-700 ml-1">Email Address</label>
+                            <input type="email" id="email" name="email" required placeholder="john@example.com" 
+                                class="w-full px-5 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-400 text-slate-800 transition-all">
                         </div>
+                    </div>
 
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-5 rounded-xl transition-all shadow-lg hover:shadow-emerald-200 flex items-center justify-center gap-3 text-lg">
-                            <span>Send Message</span>
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </form>
-                <?php endif; ?>
+                    <div class="space-y-2">
+                        <label class="text-sm font-bold text-slate-700 ml-1">Subject</label>
+                        <select id="subject" name="subject" class="w-full px-5 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-400 text-slate-800 appearance-none transition-all">
+                            <option value="General Inquiry">General Inquiry</option>
+                            <option value="Facility Question">Facility Question</option>
+                            <option value="Partnership">Partnership</option>
+                            <option value="Feedback">Feedback</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-bold text-slate-700 ml-1">Your Message</label>
+                        <textarea id="message" name="message" required rows="6" placeholder="How can we help you?" 
+                            class="w-full px-5 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-400 text-slate-800 transition-all resize-none"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-5 rounded-xl transition-all shadow-lg hover:shadow-emerald-200 flex items-center justify-center gap-3 text-lg">
+                        <span>Send Message</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+
+                <script>
+                    document.getElementById('contact-form').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        const name = document.getElementById('name').value.trim();
+                        const email = document.getElementById('email').value.trim();
+                        const subject = document.getElementById('subject').value.trim();
+                        const message = document.getElementById('message').value.trim();
+                        
+                        if (!name || !email || !message) {
+                            document.getElementById('error-message').classList.remove('hidden');
+                            document.getElementById('error-text').textContent = 'All fields are required!';
+                            return;
+                        }
+                        
+                        document.getElementById('error-message').classList.add('hidden');
+                        
+                        const newMessage = {
+                            id: Date.now(),
+                            name: name,
+                            email: email,
+                            subject: subject,
+                            message: message,
+                            date: new Date().toISOString()
+                        };
+                        
+                        let messages = [];
+                        try {
+                            const stored = localStorage.getItem('contact_messages');
+                            if (stored) {
+                                messages = JSON.parse(stored);
+                            }
+                        } catch (err) {
+                            console.error('Could not read from localStorage', err);
+                        }
+                        
+                        messages.push(newMessage);
+                        localStorage.setItem('contact_messages', JSON.stringify(messages));
+                        
+                        document.getElementById('contact-form').classList.add('hidden');
+                        document.getElementById('success-message').classList.remove('hidden');
+                    });
+
+                    function resetForm() {
+                        document.getElementById('contact-form').reset();
+                        document.getElementById('contact-form').classList.remove('hidden');
+                        document.getElementById('success-message').classList.add('hidden');
+                    }
+                </script>
             </div>
         </div>
     </div>
 </main>
 
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

@@ -1,18 +1,32 @@
 <?php
+// Initialize variables to avoid undefined warnings
+$ewaste_facilities = [];
+$search_results = [];
+$search_pincode = "";
+$states = [];
+$types = [];
+$selected_state = "";
+$selected_type = "";
+
 // Load facilities from JSON
-$json_data = file_get_contents('facilities.json');
-$ewaste_facilities = json_decode($json_data, true);
+$json_path = __DIR__ . '/data/facilities.json';
+if (file_exists($json_path)) {
+    $json_data = file_get_contents($json_path);
+    $ewaste_facilities = json_decode($json_data, true) ?: [];
+}
 
 // Get unique states and types for filters
-$states = array_unique(array_column($ewaste_facilities, 'state'));
-sort($states);
+if (!empty($ewaste_facilities)) {
+    $states = array_unique(array_column($ewaste_facilities, 'state'));
+    sort($states);
 
-$all_types = [];
-foreach ($ewaste_facilities as $f) {
-    if (isset($f['types'])) $all_types = array_merge($all_types, $f['types']);
+    $all_types = [];
+    foreach ($ewaste_facilities as $f) {
+        if (isset($f['types'])) $all_types = array_merge($all_types, $f['types']);
+    }
+    $types = array_unique($all_types);
+    sort($types);
 }
-$types = array_unique($all_types);
-sort($types);
 
 // Process search/filter
 $search_results = $ewaste_facilities;
@@ -30,7 +44,7 @@ if ($selected_type) {
     $search_results = array_filter($search_results, fn($f) => in_array($selected_type, $f['types']));
 }
 
-include 'header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 <!-- Leaflet CSS -->
@@ -44,7 +58,7 @@ include 'header.php';
 <!-- Page Header -->
 <header class="bg-slate-900 text-white py-20 relative overflow-hidden">
     <div class="absolute inset-0 opacity-20">
-        <img src="bg-facility.jpg" alt="Background" class="w-full h-full object-cover">
+        <img src="assets/img/bg-facility.jpg" alt="Background" class="w-full h-full object-cover">
     </div>
     <div class="container mx-auto px-4 relative z-10 text-center">
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Find E-Waste Facilities</h1>
@@ -76,7 +90,7 @@ include 'header.php';
                 <select name="state" class="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-400 text-slate-800 appearance-none">
                     <option value="">All States</option>
                     <?php foreach ($states as $state): ?>
-                        <option value="<?= $state ?>" <?= ($selected_state == $state) ? 'selected' : '' ?>><?= $state ?></option>
+                        <option value="<?= htmlspecialchars($state) ?>" <?= ($selected_state == $state) ? 'selected' : '' ?>><?= htmlspecialchars($state) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -85,9 +99,11 @@ include 'header.php';
                 <label class="text-sm font-bold text-slate-700 ml-1">Facility Type</label>
                 <select name="type" class="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-400 text-slate-800 appearance-none">
                     <option value="">All Types</option>
-                    <?php foreach ($types as $type): ?>
-                        <option value="<?= $type ?>" <?= ($selected_type == $type) ? 'selected' : '' ?>><?= ucfirst($type) ?></option>
-                    <?php endforeach; ?>
+                    <?php if (!empty($types)): ?>
+                        <?php foreach ($types as $type): ?>
+                            <option value="<?= htmlspecialchars($type) ?>" <?= ($selected_type == $type) ? 'selected' : '' ?>><?= ucfirst(htmlspecialchars($type)) ?></option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </select>
             </div>
 
@@ -120,7 +136,7 @@ include 'header.php';
                         <div class="absolute inset-0 bg-gradient-to-br from-emerald-600/10 to-teal-600/10"></div>
                         <i class="fas fa-<?= $facility['icon'] ?? 'recycle' ?> text-6xl text-emerald-600/30 group-hover:scale-110 group-hover:text-emerald-600 transition-all duration-500"></i>
                         <span class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-emerald-700 shadow-sm">
-                            <?= $facility['pincode'] ?>
+                            <?= htmlspecialchars($facility['pincode']) ?>
                         </span>
                     </div>
                     
@@ -130,7 +146,7 @@ include 'header.php';
                             <?php if (isset($facility['rating'])): ?>
                                 <div class="flex items-center gap-1 text-amber-500 font-bold">
                                     <i class="fas fa-star text-sm"></i>
-                                    <span><?= $facility['rating'] ?></span>
+                                    <span><?= htmlspecialchars($facility['rating']) ?></span>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -151,11 +167,13 @@ include 'header.php';
                         </div>
 
                         <div class="mt-auto pt-6 border-t border-slate-50 flex flex-wrap gap-2 mb-6">
-                            <?php foreach ($facility['types'] as $type): ?>
-                                <span class="bg-slate-100 text-slate-600 text-[10px] uppercase tracking-wider font-extrabold px-3 py-1 rounded-md">
-                                    <?= $type ?>
-                                </span>
-                            <?php endforeach; ?>
+                            <?php if (isset($facility['types'])): ?>
+                                <?php foreach ($facility['types'] as $type): ?>
+                                    <span class="bg-slate-100 text-slate-600 text-[10px] uppercase tracking-wider font-extrabold px-3 py-1 rounded-md">
+                                        <?= htmlspecialchars($type) ?>
+                                    </span>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
 
                         <a href="https://www.google.com/maps/dir/?api=1&destination=<?= urlencode($facility['address']) ?>" target="_blank"
@@ -197,20 +215,22 @@ include 'header.php';
     const facilities = <?= json_encode($search_results) ?>;
     const markers = [];
 
-    facilities.forEach(f => {
-        if (f.lat && f.lng) {
-            const marker = L.marker([f.lat, f.lng], { icon: recycleIcon })
-                .bindPopup(`
-                    <div class="p-2">
-                        <h4 class="font-bold text-emerald-600 mb-1">${f.name}</h4>
-                        <p class="text-xs text-slate-600 mb-2">${f.address}</p>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(f.address)}" target="_blank" class="text-xs font-bold text-slate-900 underline">Directions</a>
-                    </div>
-                `)
-                .addTo(map);
-            markers.push(marker);
-        }
-    });
+    if (Array.isArray(facilities)) {
+        facilities.forEach(f => {
+            if (f.lat && f.lng) {
+                const marker = L.marker([f.lat, f.lng], { icon: recycleIcon })
+                    .bindPopup(`
+                        <div class="p-2">
+                            <h4 class="font-bold text-emerald-600 mb-1">${f.name}</h4>
+                            <p class="text-xs text-slate-600 mb-2">${f.address}</p>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(f.address)}" target="_blank" class="text-xs font-bold text-slate-900 underline">Directions</a>
+                        </div>
+                    `)
+                    .addTo(map);
+                markers.push(marker);
+            }
+        });
+    }
 
     if (markers.length > 0) {
         const group = new L.featureGroup(markers);
@@ -218,4 +238,4 @@ include 'header.php';
     }
 </script>
 
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

@@ -1,9 +1,9 @@
-<?php include 'header.php'; ?>
+<?php include __DIR__ . '/includes/header.php'; ?>
 
 <!-- Hero Section -->
 <section class="bg-slate-900 text-white py-20 relative overflow-hidden">
     <div class="absolute inset-0 opacity-20">
-        <img src="bg-resources.jpg" alt="Background" class="w-full h-full object-cover">
+        <img src="assets/img/bg-resources.jpg" alt="Background" class="w-full h-full object-cover">
     </div>
     <div class="container mx-auto px-4 relative z-10 text-center">
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Educational Gallery</h1>
@@ -33,9 +33,29 @@
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             <!-- Video 1 -->
-            <div class="video-card group cursor-pointer" onclick="openModal('What is E-WASTE Pollution_ _ What Causes Electronic Waste_ _ The Dr Binocs Show _ Peekaboo Kidz.mp4', 'What is E-WASTE Pollution?')">
+            <div class="video-card group cursor-pointer" onclick="openModal('https://www.youtube.com/embed/fS3_v0F6B_g', 'What is E-WASTE Pollution?')">
                 <div class="relative rounded-[2rem] overflow-hidden bg-slate-100 shadow-lg aspect-video">
-                    <img src="th1.png" alt="Video Thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <img src="assets/img/th1.png" alt="Video Thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-slate-900/40 group-hover:bg-slate-900/20 transition-all flex items-center justify-center">
+                        <div class="w-20 h-20 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all">
+                            <i class="fas fa-play text-2xl ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 px-2">
+                    <div class="flex items-center gap-3 mb-3 text-emerald-600 font-bold text-xs uppercase tracking-widest">
+                        <span>Educational</span>
+                        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                        <span>5:02 min</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">What is E-WASTE Pollution? | Causes & Impact</h3>
+                </div>
+            </div>
+
+            <!-- Video 2 -->
+            <div class="video-card group cursor-pointer" onclick="openModal('https://www.youtube.com/embed/mK99SBe6zL8', 'India\'s Waste Problem')">
+                <div class="relative rounded-[2rem] overflow-hidden bg-slate-100 shadow-lg aspect-video">
+                    <img src="assets/img/th2.png" alt="Video Thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     <div class="absolute inset-0 bg-slate-900/40 group-hover:bg-slate-900/20 transition-all flex items-center justify-center">
                         <div class="w-20 h-20 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all">
                             <i class="fas fa-play text-2xl ml-1"></i>
@@ -46,36 +66,16 @@
                     <div class="flex items-center gap-3 mb-3 text-emerald-600 font-bold text-xs uppercase tracking-widest">
                         <span>Documentary</span>
                         <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                        <span>6:52 min</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">What is E-WASTE Pollution? | Causes & Impact</h3>
-                </div>
-            </div>
-
-            <!-- Video 2 -->
-            <div class="video-card group cursor-pointer" onclick="openModal('Inside the solution to India waste problem  _ Brut Documentary.mp4', 'India\'s Waste Problem')">
-                <div class="relative rounded-[2rem] overflow-hidden bg-slate-100 shadow-lg aspect-video">
-                    <img src="th2.png" alt="Video Thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-slate-900/40 group-hover:bg-slate-900/20 transition-all flex items-center justify-center">
-                        <div class="w-20 h-20 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all">
-                            <i class="fas fa-play text-2xl ml-1"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-8 px-2">
-                    <div class="flex items-center gap-3 mb-3 text-emerald-600 font-bold text-xs uppercase tracking-widest">
-                        <span>Brut Documentary</span>
-                        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                        <span>10:00 min</span>
+                        <span>8:45 min</span>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">Inside the solution to India's waste problem</h3>
                 </div>
             </div>
 
             <!-- Video 3 -->
-            <div class="video-card group cursor-pointer" onclick="openModal('Recycling e-waste - Good for business and the environment _ DW Documentary.mp4', 'Business of Recycling')">
+            <div class="video-card group cursor-pointer" onclick="openModal('https://www.youtube.com/embed/irO6_6t_2pM', 'Business of Recycling')">
                 <div class="relative rounded-[2rem] overflow-hidden bg-slate-100 shadow-lg aspect-video">
-                    <img src="th3.png" alt="Video Thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <img src="assets/img/th3.png" alt="Video Thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     <div class="absolute inset-0 bg-slate-900/40 group-hover:bg-slate-900/20 transition-all flex items-center justify-center">
                         <div class="w-20 h-20 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all">
                             <i class="fas fa-play text-2xl ml-1"></i>
@@ -84,9 +84,9 @@
                 </div>
                 <div class="mt-8 px-2">
                     <div class="flex items-center gap-3 mb-3 text-emerald-600 font-bold text-xs uppercase tracking-widest">
-                        <span>DW Documentary</span>
+                        <span>Industry Insight</span>
                         <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                        <span>28:18 min</span>
+                        <span>12:20 min</span>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">Recycling e-waste - Good for business and environment</h3>
                 </div>
@@ -118,7 +118,6 @@
         const titleEl = document.getElementById('modalTitle');
         
         titleEl.innerText = title;
-        // In a real project these would be proper video links or paths
         player.src = videoUrl;
         
         modal.classList.remove('invisible');
@@ -154,4 +153,4 @@
     });
 </script>
 
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

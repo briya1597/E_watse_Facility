@@ -6,12 +6,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="kisspng-earth-world-map-globe-vector-hand-planet-5a9af8cfde0632.1928504515201056799094.png" rel="icon" type="image/x-icon">
+    <link href="assets/img/kisspng-earth-world-map-globe-vector-hand-planet-5a9af8cfde0632.1928504515201056799094.png" rel="icon" type="image/x-icon">
     <title>EcoRecycle | E-Waste Management India</title>
+    
+    <!-- Tailwind CSS Standard CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script>
+    
     <style>
         body { font-family: 'Poppins', sans-serif; }
         .glass-nav {
@@ -43,6 +48,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
         .nav-link.active::after {
             width: 100%;
         }
+        
+        /* Animation utilities */
+        .animate-slow-zoom {
+            animation: slow-zoom 20s infinite alternate;
+        }
+        @keyframes slow-zoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
@@ -56,6 +70,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-500">EcoRecycle</span>
             </a>
             
+            <!-- Desktop Menu -->
             <div class="hidden md:flex items-center gap-8">
                 <a href="index.php" class="nav-link <?= ($current_page == 'index.php') ? 'active' : '' ?> text-slate-600 hover:text-emerald-600">Home</a>
                 <a href="Facility.php" class="nav-link <?= ($current_page == 'Facility.php') ? 'active' : '' ?> text-slate-600 hover:text-emerald-600">Facilities</a>
@@ -72,7 +87,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
         
         <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-emerald-50 px-4 py-6 space-y-4 animate-fade-in">
+        <div id="mobileMenu" class="hidden bg-white border-t border-emerald-50 px-4 py-6 space-y-4">
             <a href="index.php" class="block py-2 text-slate-600 hover:text-emerald-600 font-medium <?= ($current_page == 'index.php') ? 'text-emerald-600' : '' ?>">Home</a>
             <a href="Facility.php" class="block py-2 text-slate-600 hover:text-emerald-600 font-medium <?= ($current_page == 'Facility.php') ? 'text-emerald-600' : '' ?>">Facilities</a>
             <a href="Resources.php" class="block py-2 text-slate-600 hover:text-emerald-600 font-medium <?= ($current_page == 'Resources.php') ? 'text-emerald-600' : '' ?>">Resources</a>
@@ -81,9 +96,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </nav>
 
     <script>
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
         });
     </script>

@@ -1,9 +1,14 @@
-<?php include 'header.php'; ?>
+<?php
+// Initialize state if accessed via filter
+$filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
+
+include __DIR__ . '/includes/header.php'; 
+?>
 
 <!-- Hero Section -->
 <section class="bg-slate-900 text-white py-20 relative overflow-hidden">
     <div class="absolute inset-0 opacity-20">
-        <img src="bg-resources.jpg" alt="Background" class="w-full h-full object-cover">
+        <img src="assets/img/bg-resources.jpg" alt="Background" class="w-full h-full object-cover">
     </div>
     <div class="container mx-auto px-4 relative z-10 text-center">
         <h1 class="text-4xl md:text-5xl font-extrabold mb-4">E-Waste Resources</h1>
@@ -99,7 +104,7 @@
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 mb-3">The E-Waste Process</h3>
                         <p class="text-slate-600 text-sm mb-6 leading-relaxed flex-grow">Watch how electronics are properly dismantled and components are sorted in certified facilities.</p>
-                        <a href="videos.html" class="text-teal-600 font-bold inline-flex items-center gap-2 group-hover:gap-3 transition-all">
+                        <a href="videos.php" class="text-teal-600 font-bold inline-flex items-center gap-2 group-hover:gap-3 transition-all">
                             Watch Video <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
@@ -200,8 +205,9 @@
 </section>
 
 <style>
-    .category-btn { @apply text-slate-500 font-medium hover:bg-emerald-50 hover:text-emerald-600; }
-    .category-btn.active { @apply bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-200; }
+    .category-btn { color: #64748b; font-weight: 500; transition: all 0.3s ease; }
+    .category-btn:hover { background-color: #ecfdf5; color: #059669; }
+    .category-btn.active { background-color: #059669; color: white; font-weight: 700; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2); }
     .faq-toggle i.rotate-180 { transform: rotate(180deg); }
 </style>
 
@@ -233,32 +239,35 @@
         // Show/hide resources
         resources.forEach(resource => {
             if (category === 'all' || resource.getAttribute('data-category') === category) {
-                resource.style.transform = 'scale(1)';
-                setTimeout(() => resource.style.display = 'flex', 0);
+                resource.style.display = 'flex';
+                setTimeout(() => { resource.style.opacity = '1'; resource.style.transform = 'scale(1)'; }, 10);
             } else {
+                resource.style.opacity = '0';
                 resource.style.transform = 'scale(0.95)';
-                setTimeout(() => resource.style.display = 'none', 0);
+                setTimeout(() => resource.style.display = 'none', 300);
             }
         });
     }
 
     // Simple search functionality
     const searchInput = document.getElementById('resourceSearch');
-    searchInput.addEventListener('input', () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        const resources = document.querySelectorAll('.resource-card');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const resources = document.querySelectorAll('.resource-card');
 
-        resources.forEach(resource => {
-            const title = resource.querySelector('h3').textContent.toLowerCase();
-            const description = resource.querySelector('p').textContent.toLowerCase();
+            resources.forEach(resource => {
+                const title = resource.querySelector('h3').textContent.toLowerCase();
+                const description = resource.querySelector('p').textContent.toLowerCase();
 
-            if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                resource.style.display = 'flex';
-            } else {
-                resource.style.display = 'none';
-            }
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    resource.style.display = 'flex';
+                } else {
+                    resource.style.display = 'none';
+                }
+            });
         });
-    });
+    }
 
     // Handle URL parameters for filtering
     document.addEventListener('DOMContentLoaded', () => {
@@ -270,4 +279,4 @@
     });
 </script>
 
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>
