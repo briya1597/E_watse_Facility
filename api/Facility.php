@@ -9,7 +9,7 @@ $selected_state = "";
 $selected_type = "";
 
 // Load facilities from JSON
-$json_path = __DIR__ . '/data/facilities.json';
+$json_path = __DIR__ . '/../data/facilities.json';
 if (file_exists($json_path)) {
     $json_data = file_get_contents($json_path);
     $ewaste_facilities = json_decode($json_data, true) ?: [];

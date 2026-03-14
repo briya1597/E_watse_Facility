@@ -5,7 +5,7 @@ $search_results = [];
 $search_pincode = "";
 
 // Load facilities from JSON
-$json_path = __DIR__ . '/data/facilities.json';
+$json_path = __DIR__ . '/../data/facilities.json';
 if (file_exists($json_path)) {
     $json_data = file_get_contents($json_path);
     $ewaste_facilities = json_decode($json_data, true) ?: [];
@@ -285,11 +285,11 @@ include __DIR__ . '/includes/header.php';
     // Lottie Animations
     function loadAnimations() {
         const animations = [
-            { id: 'waste-Ani', path: '/api/assets/animations/Waste_Ani.json' },
-            { id: 'guide-Ani', path: '/api/assets/animations/Guide.json' },
-            { id: 'video-Ani', path: '/api/assets/animations/Video.json' },
-            { id: 'article-Ani', path: '/api/assets/animations/Article.json' },
-            { id: 'tools-Ani', path: '/api/assets/animations/Tools.json' }
+            { id: 'waste-Ani', path: '/assets/animations/Waste_Ani.json' },
+            { id: 'guide-Ani', path: '/assets/animations/Guide.json' },
+            { id: 'video-Ani', path: '/assets/animations/Video.json' },
+            { id: 'article-Ani', path: '/assets/animations/Article.json' },
+            { id: 'tools-Ani', path: '/assets/animations/Tools.json' }
         ];
 
         animations.forEach(ani => {
