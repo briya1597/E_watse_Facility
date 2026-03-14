@@ -6,7 +6,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="assets/img/kisspng-earth-world-map-globe-vector-hand-planet-5a9af8cfde0632.1928504515201056799094.png" rel="icon" type="image/x-icon">
+    <link href="assets/img/kisspng-earth-world-map-globe-vector-hand-planet-5a9af8cfde0632.1928504515201056799094.png" rel="icon" type="image/png">
     <title>EcoRecycle | E-Waste Management India</title>
     
     <!-- Tailwind CSS Standard CDN -->
